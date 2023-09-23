@@ -1,0 +1,20 @@
+{
+  "agent": {
+    "debug": true,
+    "region": "us-east-1"
+  },
+  "traces": {
+    "traces_collected": {
+      "apm": {
+        "enabled": true
+      }
+    }
+  },
+  "logs": {
+    "metrics_collected": {
+      "apm": {
+        "enabled": true
+      }
+    }
+  }
+}

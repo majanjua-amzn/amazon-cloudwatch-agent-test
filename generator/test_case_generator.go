@@ -99,6 +99,11 @@ var testTypeToTestConfig = map[string][]testConfig{
 			terraformDir: "terraform/ec2/creds",
 			targets:      map[string]map[string]struct{}{"os": {"al2": {}}},
 		},
+		{
+			testDir:      "./test/apm_ec2",
+			terraformDir: "terraform/ec2/apm",
+			targets:      map[string]map[string]struct{}{"os": {"al2": {}}},
+		},
 	},
 	/*
 		You can only place 1 mac instance on a dedicate host a single time.
