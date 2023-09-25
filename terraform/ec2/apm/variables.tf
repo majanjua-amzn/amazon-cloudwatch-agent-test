@@ -3,7 +3,7 @@
 
 variable "region" {
   type    = string
-  default = "us-east-1"
+  default = "us-west-2"
 }
 
 variable "ec2_instance_type" {
@@ -45,4 +45,70 @@ variable "test_name" {
 variable "test_dir" {
   type    = string
   default = ""
+}
+
+variable "ca_cert_path" {
+  type    = string
+  default = ""
+}
+
+variable "arc" {
+  type    = string
+  default = "amd64"
+
+  validation {
+    condition     = contains(["amd64", "arm64"], var.arc)
+    error_message = "Valid values for arc are (amd64, arm64)."
+  }
+}
+
+variable "binary_name" {
+  type    = string
+  default = ""
+}
+
+variable "local_stack_host_name" {
+  type    = string
+  default = "localhost.localstack.cloud"
+}
+
+variable "excluded_tests" {
+  type    = string
+  default = ""
+}
+
+variable "s3_bucket" {
+  type    = string
+  default = ""
+}
+
+variable "cwa_github_sha" {
+  type    = string
+  default = ""
+}
+
+variable "github_test_repo" {
+  type    = string
+  default = "https://github.com/aws/amazon-cloudwatch-agent-test.git"
+}
+
+variable "github_test_repo_branch" {
+  type    = string
+  default = "main"
+}
+
+variable "is_canary" {
+  type    = bool
+  default = false
+}
+
+variable "plugin_tests" {
+  type    = string
+  default = ""
+}
+
+variable "agent_start" {
+  description = "default command should be for ec2 with linux"
+  type        = string
+  default     = "sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -s -c "
 }
