@@ -90,7 +90,10 @@ func TestHostedInAttributes(t *testing.T) {
 		}
 	}
 
+	// Sleep 1 minute to let metrics and traces be exported.
 	time.Sleep(1 * time.Minute)
+
+	// Using context cancel doesn't kill child process, kill process group instead.
 	if err := syscall.Kill(-cmd.Process.Pid, syscall.SIGKILL); err != nil {
 		t.Fatalf("failed to stop application: %v.", err)
 	}
