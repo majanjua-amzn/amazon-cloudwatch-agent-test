@@ -94,7 +94,7 @@ resource "null_resource" "pulse_e2e_run_test" {
       "aws s3 cp s3://apm-beta-pre-release-test/e2e/spring-petclinic-api-gateway-2.6.7.jar ./",
       "echo run pulse e2e test",
       "cd ~/amazon-cloudwatch-agent-test",
-      "go test ${var.test_dir} -test.id=${module.common.testing_id} -v"
+      "go test ${var.test_dir} -test.id=${module.common.testing_id} -p 1 -timeout 1h -computeType=EC2 -bucket=${var.s3_bucket} -plugins='${var.plugin_tests}' -cwaCommitSha=${var.cwa_github_sha} -caCertPath=${var.ca_cert_path} -v"
     ]
   }
 
