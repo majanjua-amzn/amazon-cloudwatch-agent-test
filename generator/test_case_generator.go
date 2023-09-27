@@ -54,7 +54,7 @@ var testTypeToTestConfig = map[string][]testConfig{
 		{
 			testDir:      "./test/apm_ec2",
 			terraformDir: "terraform/ec2/apm",
-			targets:      map[string]map[string]struct{}{"os": {"al2": {}}},
+			targets:      map[string]map[string]struct{}{"os": {"ubuntu-22.04": {}}},
 		},
 	},
 }
