@@ -64,8 +64,15 @@ resource "null_resource" "pulse_e2e_install_cwa" {
 
   provisioner "remote-exec" {
     inline = [
+      "echo sha ${var.cwa_github_sha}",
+      "sudo cloud-init status --wait",
+      "echo clone and install agent",
+      "git clone --branch ${var.github_test_repo_branch} ${var.github_test_repo}",
+      "cd amazon-cloudwatch-agent-test",
       "aws s3 cp s3://apm-private-beta/amd64/amazon-cloudwatch-agent.deb ./", # replace with the newly built package
       "aws s3 cp s3://apm-private-beta/amd64/amazon-cloudwatch-agent.rpm ./", # replace with the newly built package
+      # "aws s3 cp s3://${local.binary_uri} .",
+      "export PATH=$PATH:/snap/bin:/usr/local/go/bin",
       var.install_agent,
     ]
   }
