@@ -78,6 +78,7 @@ func TestHostedInAttributes(t *testing.T) {
 		t.Fatalf("failed to start application: %v.", err)
 	}
 
+	success := false
 	for i := 1; i < 10; i++ {
 		if resp, err := http.Get("http://localhost:8080/api/gateway/owners/1"); err != nil {
 			t.Logf("failed to send out request: %v.", err)
@@ -86,8 +87,13 @@ func TestHostedInAttributes(t *testing.T) {
 			t.Logf("returned failure response: %d", resp.StatusCode)
 			time.Sleep(10000)
 		} else {
+			success = true
 			t.Log("successfully sent out the request.")
 		}
+	}
+
+	if !success {
+		t.Fatalf("failed to call the test service.")
 	}
 
 	// Sleep 1 minute to let metrics and traces be exported.
