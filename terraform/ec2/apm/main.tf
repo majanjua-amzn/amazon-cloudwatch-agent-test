@@ -43,6 +43,10 @@ resource "aws_instance" "cwagent" {
   vpc_security_group_ids               = [module.basic_components.security_group]
   associate_public_ip_address          = true
   instance_initiated_shutdown_behavior = "terminate"
+
+  tags = {
+    Name="apm-ec2-${module.common.testing_id}"
+  }
 }
 
 data "aws_ami" "latest" {
