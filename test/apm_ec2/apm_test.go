@@ -16,9 +16,13 @@ import (
 	"time"
 
 	"github.com/aws/amazon-cloudwatch-agent-test/environment"
+	"github.com/aws/amazon-cloudwatch-agent-test/test/metric"
 	"github.com/aws/amazon-cloudwatch-agent-test/test/status"
 	"github.com/aws/amazon-cloudwatch-agent-test/test/test_runner"
 )
+
+const testRetryCount = 3
+const namespace = "AWS/APM"
 
 var path, testId string
 
@@ -40,6 +44,29 @@ func (runner *APMEC2TestRunner) Validate() status.TestGroupResult {
 	}
 }
 
+func (runner *APMEC2TestRunner) ValidateMetrics() status.TestGroupResult {
+	metricsToFetch := metric.APMMetricNames
+	testResults := make([]status.TestResult, len(metricsToFetch))
+	instructions := metric.EC2ServerConsumerInstructions
+
+	for i, metricName := range metricsToFetch {
+		var testResult status.TestResult
+		for j := 0; j < testRetryCount; j++ {
+			testResult = metric.ValidateAPMMetric(runner.DimensionFactory, namespace, metricName, instructions)
+			if testResult.Status == status.SUCCESSFUL {
+				break
+			}
+			time.Sleep(15 * time.Second)
+		}
+		testResults[i] = testResult
+	}
+
+	return status.TestGroupResult{
+		Name:        runner.GetTestName(),
+		TestResults: testResults,
+	}
+}
+
 func (runner *APMEC2TestRunner) GetTestName() string {
 	return "APMTest/EC2"
 }
@@ -55,7 +82,8 @@ func (runner *APMEC2TestRunner) GetMeasuredMetrics() []string {
 var _ test_runner.ITestRunner = (*APMEC2TestRunner)(nil)
 
 func TestHostedInAttributes(t *testing.T) {
-	testRunner := test_runner.TestRunner{TestRunner: &APMEC2TestRunner{test_runner.BaseTestRunner{}}}
+	ec2TestRunner := &APMEC2TestRunner{test_runner.BaseTestRunner{}}
+	testRunner := test_runner.TestRunner{TestRunner: ec2TestRunner}
 	result := testRunner.Run()
 	if result.GetStatus() != status.SUCCESSFUL {
 		t.Fatal("Failed to install agent with APM config")
@@ -98,6 +126,12 @@ func TestHostedInAttributes(t *testing.T) {
 
 	// Sleep 1 minute to let metrics and traces be exported.
 	time.Sleep(1 * time.Minute)
+
+	validateResult := ec2TestRunner.ValidateMetrics()
+	if validateResult.GetStatus() != status.SUCCESSFUL {
+		t.Fatal("Failed to install agent with APM config")
+		validateResult.Print()
+	}
 
 	// Using context cancel doesn't kill child process, kill process group instead.
 	if err := syscall.Kill(-cmd.Process.Pid, syscall.SIGKILL); err != nil {

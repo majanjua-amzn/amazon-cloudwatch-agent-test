@@ -45,7 +45,7 @@ resource "aws_instance" "cwagent" {
   instance_initiated_shutdown_behavior = "terminate"
 
   tags = {
-    Name="apm-ec2-${module.common.testing_id}"
+    Name = "apm-ec2-${module.common.testing_id}"
   }
 }
 
@@ -104,5 +104,3 @@ resource "null_resource" "pulse_e2e_run_test" {
 
   depends_on = [null_resource.pulse_e2e_install_cwa]
 }
-
-# add validator
