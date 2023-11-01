@@ -10,7 +10,7 @@
               {
                 "selectors": [
                   {
-                    "dimensions": "RemoteTarget",
+                    "dimensions": "aws.remote.target",
                     "match": "remote-target"
                   }
                 ],
